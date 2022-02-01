@@ -1,10 +1,13 @@
 package com.basic.boardUpgradeProject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter // get 함수를 일괄적으로 만들어줍니다.
@@ -15,6 +18,7 @@ public class User {
     @Id // ID 값, Primary Key로 사용하겠다는 뜻입니다.
     @GeneratedValue(strategy = GenerationType.AUTO) // ID가 자동으로 생성 및 증가합니다.
     @Column(name = "USER_ID")
+    @JoinColumn()
     private Long id;
 
     // nullable: null 허용 여부
@@ -34,6 +38,14 @@ public class User {
 
     @Column(name = "USER_KAKAO_ID", unique = true)
     private Long kakaoId;
+
+    @JsonIgnoreProperties({"user"})
+    @OneToMany(mappedBy = "user")
+    private List<Board> board;
+
+    @JsonIgnoreProperties({"user"})
+    @OneToMany(mappedBy = "user")
+    private List<BoardComment> comment;
 
     public User(String username, String password, String email, UserRoleEnum role) {
         this.username = username;

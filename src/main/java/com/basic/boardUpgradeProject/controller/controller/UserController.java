@@ -1,4 +1,4 @@
-package com.basic.boardUpgradeProject.controller;
+package com.basic.boardUpgradeProject.controller.controller;
 
 
 import com.basic.boardUpgradeProject.service.KakaoUserService;
@@ -29,12 +29,12 @@ public class UserController {
     }
 
     // 회원 가입 페이지
-    @GetMapping( "user/signup")
+    @GetMapping("user/signup")
     public String signup() {
         return "signup";
     }
 
-    @GetMapping( "user/kakao/callback")
+    @GetMapping("user/kakao/callback")
     public String kakaoLogin(@RequestParam String code) throws JsonProcessingException {
         kakaoUserService.kakaoLogin(code);
         return "redirect:/";

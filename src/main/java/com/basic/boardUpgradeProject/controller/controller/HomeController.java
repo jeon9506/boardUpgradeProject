@@ -1,4 +1,4 @@
-package com.basic.boardUpgradeProject.controller;
+package com.basic.boardUpgradeProject.controller.controller;
 
 import com.basic.boardUpgradeProject.model.UserRoleEnum;
 import com.basic.boardUpgradeProject.security.UserDetailsImpl;

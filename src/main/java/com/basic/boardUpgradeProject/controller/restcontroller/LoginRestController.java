@@ -1,4 +1,4 @@
-package com.basic.boardUpgradeProject.controller;
+package com.basic.boardUpgradeProject.controller.restcontroller;
 
 import com.basic.boardUpgradeProject.dto.LoginRequestDto;
 import com.basic.boardUpgradeProject.service.UserService;

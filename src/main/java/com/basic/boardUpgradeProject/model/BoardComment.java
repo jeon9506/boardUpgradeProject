@@ -22,9 +22,9 @@ public class BoardComment {
 
     @ManyToOne
     @JoinColumn(name = "BOARD_ID", nullable = false)
-    private Board board_id;
+    private Board board;
 
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
-    private User user_id;
+    private User user;
 }
