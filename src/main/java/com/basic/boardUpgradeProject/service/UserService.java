@@ -8,19 +8,19 @@ import com.basic.boardUpgradeProject.model.UserRoleEnum;
 import com.basic.boardUpgradeProject.repository.UserRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class UserService {
-    private final PasswordEncoder passwordEncoder;
+    BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -68,6 +68,11 @@ public class UserService {
 
         if (!found.isPresent()) {
             throw new IllegalArgumentException("존재하지않는 닉네임입니다!");
+        }
+
+//        String password = passwordEncoder.encode(requestDto.getPassword());
+        if (!passwordEncoder.matches(requestDto.getPassword(), found.get().getPassword())) {
+            throw new IllegalArgumentException("닉네임 또는 패스워드를 확인해주세요!");
         }
     }
 }
