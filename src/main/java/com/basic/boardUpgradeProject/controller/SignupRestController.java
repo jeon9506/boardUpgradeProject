@@ -48,7 +48,7 @@ public class SignupRestController {
         boolean chk = false;
         String msg = "";
 
-        System.out.println("api/user/signup post 통과!!!" + chk);
+        System.out.println("user/signup post 통과!!!" + chk);
         try {
             userService.registerUser(requestDto);
             chk = true;

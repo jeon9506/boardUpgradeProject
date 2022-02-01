@@ -8,12 +8,64 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
-    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>로그인 페이지</title>
+    <script>
+        //회원가입 클릭시 실행되는 메서드
+        function onclickLogin() {
+            if (signUpvalidationChk()) {
+                let username = $('#username').val();
+                let password = $('#password').val();
+
+                let data = {
+                    "username": username,
+                    "password": password,
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/loginChk',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        debugger
+                        let result = response;
+                        if (result.chk) {
+                            alert(username + '로그인에 성공하셨습니다!');
+                            window.location.href = "/";
+                        }
+
+                        if (response.msg) {
+                            alert(result.msg);
+                        }
+                    }
+                })
+            }
+        }
+
+        // 회원가입 validationChk 메서드
+        function signUpvalidationChk() {
+            let username = $('#username').val();
+            let password = $('#password').val();
+
+            if (!username) {
+                alert('닉네임을 입력해주세요!');
+                return false;
+            } else if (!password) {
+                alert('비밀번호를 입력해주세요!');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 </head>
 <body>
 <div id="login-form">
-    <div id="login-title">Log into Select Shop</div>
+    <div id="login-title" style="text-align: center; font-size: 40px;">HS 개발 게시판</div>
     <button id="login-kakao-btn"
             onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=a5c76f065a36238134481c7ecdf8d862&redirect_uri=http://localhost:8080/user/kakao/callback&response_type=code'">
         카카오로 로그인하기
@@ -21,24 +73,23 @@
     <button id="login-id-btn" onclick="location.href='/user/signup'">
         회원 가입하기
     </button>
-    <form action="/user/login" method="post">
-        <div class="login-id-label">아이디</div>
-        <input type="text" name="username" class="login-input-box">
-
-        <div class="login-id-label">비밀번호</div>
-        <input type="password" name="password" class="login-input-box">
-
-        <button id="login-id-submit">로그인</button>
+    <form action="" method="post">
+        <div class="form-group row">
+            <label for="username">닉네임</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="username" name="username" placeholder="닉네임..."
+                       aria-label="Recipient's username" aria-describedby="basic-addon2">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="password">패스워드</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="password" name="password" placeholder="패스워드..."
+                       aria-label="Recipient's username" aria-describedby="basic-addon2">
+            </div>
+        </div>
     </form>
-    <div id="login-failed" style="display:none" class="alert alert-danger" role="alert">로그인에 실패하였습니다.</div>
+    <button id="login-id-submit" onclick="onclickLogin()">로그인</button>
 </div>
 </body>
-<script>
-    const href = location.href;
-    const queryString = href.substring(href.indexOf("?") + 1)
-    if (queryString === 'error') {
-        const errorDiv = document.getElementById('login-failed');
-        errorDiv.style.display = 'block';
-    }
-</script>
 </html>

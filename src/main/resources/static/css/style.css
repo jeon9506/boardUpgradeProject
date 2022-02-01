@@ -373,7 +373,7 @@ button {
 
 #login-kakao-btn {
     border-width: 0;
-    margin: 96px 0 8px;
+    margin: 48px 0 8px;
     width: 393px;
     height: 62px;
     flex-grow: 0;
@@ -446,9 +446,13 @@ button {
     color: #212529;
 }
 
+.row {
+    margin-top: 35px;
+}
+
 #login-id-submit {
     border-width: 0;
-    width: 393px;
+    width: 330px;
     height: 62px;
     flex-grow: 0;
     display: flex;
@@ -456,7 +460,7 @@ button {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    margin: 40px 0 0;
+    margin: 70px 0 0;
     padding: 11px 12px;
     border-radius: 5px;
     background-color: #15aabf;
