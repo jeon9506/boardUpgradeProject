@@ -8,45 +8,179 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
+
     <meta charset="UTF-8">
     <title>회원가입 페이지</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <script>
+        var duplClickChk = false;
+
         function onclickAdmin() {
-// Get the checkbox
+            // Get the checkbox
             var checkBox = document.getElementById("admin-check");
-// Get the output text
+            // Get the output text
             var box = document.getElementById("admin-token");
 
-// If the checkbox is checked, display the output text
+            // If the checkbox is checked, display the output text
             if (checkBox.checked == true) {
                 box.style.display = "block";
             } else {
                 box.style.display = "none";
             }
         }
+
+        //회원가입 클릭시 실행되는 메서드
+        function onclickSignUp() {
+            let username = $('#username').val();
+            let password = $('#password').val();
+            let password_2 = $('#password_2').val();
+
+            let data = {
+                "username": username,
+                "password": password,
+                "password_2": password_2
+            };
+
+            // 유효성 검증 통과
+            if (signUpvalidationChk() && duplClickChk) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/signup',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        let result = response;
+                        if (result.chk) {
+                            alert(username + '님 회원가입에 성공하셨습니다!!! 로그인을 해주세요~짝짝짝');
+                            window.location.href = "/user/login";
+                        } else {
+                            duplClickChk = false;
+                            return false;
+                        }
+
+                        if (response.msg) {
+                            alert(result.msg);
+                        }
+                    }
+                })
+
+            }
+        }
+
+        //중복된 닉네임 validationChk 메서드
+        function usernameDuplChk() {
+            debugger
+            let username = $('#username').val();
+
+            if (!username) {
+                alert('닉네임을 입력해주세요!');
+                return false;
+            }
+
+            // 전달할 data JSON으로 만듭니다.
+            // let data = {'username': username};
+
+            $.ajax({
+                type: "POST",
+                url: "/user/usernameDuplChk/" + username,
+                contentType: "application/json",
+                success: function (response) {
+                    let result = response;
+                    if (result.chk) {
+                        alert(username + '은 사용하실 수 있습니다!!!');
+                        duplClickChk = true;
+                        return true;
+                    } else {
+                        if (response.msg) {
+                            alert(result.msg);
+                        }
+                        duplClickChk = false;
+                        return false;
+                    }
+                }
+            });
+        }
+
+        // 회원가입 validationChk 메서드
+        function signUpvalidationChk() {
+            let username = $('#username').val();
+            let password = $('#password').val();
+            let password_2 = $('#password_2').val();
+
+            let reg_username = /^[a-zA-Z0-9]{3,}$/;
+
+            if (!username) {
+                alert('닉네임을 입력해주세요!');
+                return false;
+            } else if (!password) {
+                alert('비밀번호를 입력해주세요!');
+                return false;
+            } else if (!password_2) {
+                alert('비밀번호 확인 입력해주세요!');
+                return false;
+            } else if (!reg_username.test(username)) {
+                alert('닉네임은 최소 3자 이상, 알파벳 대소문자 숫자로만 입력해주세요!');
+                return false;
+            } else if (password.length < 4) {
+                alert('비밀번호는 최소 4자 이상 입력해주세요!');
+                return false;
+            } else if (password.includes(username)) {
+                alert('비밀번호에 닉네임을 포함하실 수 없습니다!');
+                return false;
+            } else if (password != password_2) {
+                alert('비밀번호 확인이 일치하지 않습니다!');
+                return false;
+            } else if (!duplClickChk) {
+                alert('닉네임 중복검사를 해주세요!');
+                return false;
+            }
+
+            return true;
+        }
+
     </script>
 </head>
 <body>
 <div id="login-form">
-    <div id="login-title">Sign up Select Shop</div>
-
+    <div id="login-title">나만의 게시판 회원가입</div>
+    <p></p>
+    <p></p>
     <form action="/user/signup" method="post">
-        <div class="login-id-label">Username</div>
-        <input type="text" name="username" placeholder="Username" class="login-input-box">
-
-        <div class="login-id-label">Password</div>
-        <input type="password" name="password" class="login-input-box">
-
-        <div class="login-id-label">E-mail</div>
-        <input type="text" name="email" placeholder="E-mail" class="login-input-box">
-
-        <div>
-            <input id="admin-check" type="checkbox" name="admin" onclick="onclickAdmin()" style="margin-top: 40px;">관리자
-            <input id="admin-token" type="password" name="adminToken" placeholder="관리자 암호" class="login-input-box"
-                   style="display:none">
+        <div class="form-group row">
+            <label for="username">닉네임</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="username" name="username" placeholder="닉네임..."
+                       aria-label="Recipient's username" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-info" type="button" onclick="usernameDuplChk()">중복체크</button>
+                </div>
+            </div>
         </div>
-        <button id="login-id-submit">회원 가입</button>
+
+        <div class="form-group row">
+            <label for="password">비밀번호</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호...">
+        </div>
+        <div class="form-group row">
+            <label for="password">비밀번호 확인</label>
+            <input type="password" class="form-control" id="password_2" name="password_2" placeholder="비밀번호 확인...">
+        </div>
+        <!--        <div class="form-group row">-->
+        <!--            <label for="email">E-mail(필수x)</label>-->
+        <!--            <input type="email" class="form-control" id="email" name="email" placeholder="E-mail...">-->
+        <!--        </div>-->
+        <!--        <div class="form-group row">-->
+        <!--            <input id="admin-check" type="checkbox" name="admin" onclick="onclickAdmin()" style="margin-top: 40px;">관리자-->
+        <!--            <input id="admin-token" type="password" name="adminToken" placeholder="관리자 암호" class="login-input-box"-->
+        <!--                   style="display:none">-->
+        <!--        </div>-->
     </form>
+    <button id="login-id-submit" onclick="onclickSignUp()">회원가입</button>
 </div>
 </body>
 </html>

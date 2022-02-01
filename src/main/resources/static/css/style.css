@@ -342,7 +342,7 @@ button {
 
 #login-form {
     width: 538px;
-    height: 710px;
+    height: 680px;
     margin: 70px auto 141px auto;
     display: flex;
     flex-direction: column;
@@ -361,7 +361,7 @@ button {
     /*margin: 56px auto auto auto;*/
     flex-grow: 0;
     font-family: SpoqaHanSansNeo;
-    font-size: 32px;
+    font-size: 26px;
     font-weight: bold;
     font-stretch: normal;
     font-style: normal;
@@ -422,7 +422,7 @@ button {
     border-width: 0;
 
     width: 370px !important;
-    height: 52px;
+    height: 38px;
     margin: 14px 0 0;
     border-radius: 5px;
     background-color: #e9ecef;
@@ -768,28 +768,6 @@ button {
     /*the container must be positioned relative:*/
     position: relative;
     display: inline-block;
-}
-
-input {
-    border: 1px solid transparent;
-    background-color: #f1f1f1;
-    padding: 10px;
-    font-size: 16px;
-}
-
-input[type=text] {
-    background-color: #f1f1f1;
-    /*width: 100%;*/
-}
-
-input[type=password] {
-    background-color: #f1f1f1;
-    /*width: 100%;*/
-}
-
-input[type=submit] {
-    background-color: DodgerBlue;
-    color: #fff;
 }
 
 .autocomplete-items {

@@ -1,6 +1,5 @@
 package com.basic.boardUpgradeProject.security;
 
-
 import com.basic.boardUpgradeProject.model.User;
 import com.basic.boardUpgradeProject.model.UserRoleEnum;
 import org.springframework.security.core.GrantedAuthority;

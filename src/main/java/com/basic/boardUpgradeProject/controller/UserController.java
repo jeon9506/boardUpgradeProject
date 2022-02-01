@@ -9,7 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class UserController {
@@ -24,25 +28,19 @@ public class UserController {
     }
 
     // 회원 로그인 페이지
-    @GetMapping("/user/login")
+    @GetMapping(value = "/user/login")
     public String login() {
+        System.out.println("/user/login get 통과완료!!!");
         return "login";
     }
 
     // 회원 가입 페이지
-    @GetMapping("/user/signup")
+    @GetMapping(value = "/user/signup")
     public String signup() {
         return "signup";
     }
 
-    // 회원 가입 요청 처리
-    @PostMapping("/user/signup")
-    public String registerUser(SignupRequestDto requestDto) {
-        userService.registerUser(requestDto);
-        return "redirect:/user/login";
-    }
-
-    @GetMapping("/user/kakao/callback")
+    @GetMapping(value = "/user/kakao/callback")
     public String kakaoLogin(@RequestParam String code) throws JsonProcessingException {
         kakaoUserService.kakaoLogin(code);
         return "redirect:/";

@@ -1,6 +1,5 @@
 package com.basic.boardUpgradeProject.controller;
 
-import com.basic.boardUpgradeProject.model.UserRoleEnum;
 import com.basic.boardUpgradeProject.security.UserDetailsImpl;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -13,9 +12,9 @@ public class HomeController {
     public String home(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         model.addAttribute("username", userDetails.getUsername());
 
-        if (userDetails.getUser().getRole() == UserRoleEnum.ADMIN) {
-            model.addAttribute("admin_role", true);
-        }
+//        if (userDetails.getUser().getRole() == UserRoleEnum.ADMIN) {
+//            model.addAttribute("admin_role", true);
+//        }
 
         return "index";
     }

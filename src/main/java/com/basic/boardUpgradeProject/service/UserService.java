@@ -47,4 +47,13 @@ public class UserService {
         User user = new User(username, password, email, role);
         userRepository.save(user);
     }
+
+    // username 중복여부 chk 메서드
+    public void usernameDuplChk(String username) {
+        // 회원 ID 중복 확인
+        Optional<User> found = userRepository.findByUsername(username);
+        if (found.isPresent()) {
+            throw new IllegalArgumentException("중복된 닉네임 입니다!");
+        }
+    }
 }

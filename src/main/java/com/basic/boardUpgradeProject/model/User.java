@@ -25,10 +25,10 @@ public class User {
     @Column(name = "USER_PASSWORD", nullable = false)
     private String password;
 
-    @Column(name = "USER_EMAIL", nullable = false, unique = true)
+    @Column
     private String email;
 
-    @Column(name = "USER_ROLE", nullable = false)
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
