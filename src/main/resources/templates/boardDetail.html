@@ -10,7 +10,7 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+    <script type="text/javascript" src="/js/common.js"></script>
     <title>개발자 게시판 페이지</title>
 
     <style>
@@ -75,61 +75,99 @@
             /* 0% {color:white;} 30% {color: yellow;} 100% {color:red; font-weight: bold;} */
         } </style>
 
-    <script>
+    <script th:inline="javascript">
         $(document).ready(function () {
             // HTML 문서를 로드할 때마다 실행합니다.
-            getMessages();
+            getBoardInfo();
         })
 
-        // 게시판를 불러와서 보여줍니다.
-        function getMessages() {
-            // 1. 기존 게시판 내용을 지웁니다.
-            $('#contents').empty();
-            // 2. 게시판 목록을 불러와서 HTML로 붙입니다.
+        // 게시글 정보 메서드
+        function getBoardInfo() {
+            let board_id = "[[${board_id}]]";
+
             $.ajax({
                 type: 'GET',
-                url: '/api/board',
+                url: '/api/board/' + board_id,
                 contentType: "application/json",
                 success: function (response) {
-                    let count = response.length;
-                    $('#board_count').text(count);
+                    console.log(response)
+                    let boardInfo = response;
+                    let title = boardInfo["title"];
+                    let username = boardInfo["user"].username;
+                    let contents = boardInfo['contents'];
+                    let modifiedAt = boardInfo['modified_at'];
+                    modifiedAt = formatDate(modifiedAt)
+                    let board_id = boardInfo["id"];// board_key
+                    let user_id = boardInfo["user"].id; // user_key
 
-                    for (let i = 0; i < count; i++) {
-                        let message = response[i];
-                        let id = message['id'];
-                        let title = message['title'];
-                        let username = message['username'];
-                        let contents = message['contents'];
-                        let createAt = message['createAt'];
-                        let modifiedAt = message['modifiedAt'];
-                        addHTML(id, title, username, contents, createAt, modifiedAt);
-                    }
+                    $('#title').val(title);
+                    $('#username').text(username);
+                    $('#contents').val(contents);
+                    $('#modifiedAt').text(modifiedAt);
+                    $('#board_id').val(board_id);
+                    $('#user_id').val(user_id);
                 }
             })
         }
 
-        // 게시판 하나를 HTML로 만들어서 body 태그 내 원하는 곳에 붙입니다.
-        function addHTML(id, title, username, contents, createAt, modifiedAt) {
-            // 1. HTML 태그를 만듭니다.
-            let tempHtml = `
-            <tr>
-                <td id="${id}-number">${id}</td>
-                <td id="title">
-                    <a id="${id}-title" href="/board/${id}">${title}</a>
-                    <span class="hit">hit!</span>
-                </td>
-                <td id="${id}-username">${username}</td>
-                <td id="${id}-modifiedAt">${modifiedAt}</td>
-                <td>---</td>
-            <tr>`;
-            // 2. #cards-box 에 HTML을 붙인다.
-            $('#contents').append(tempHtml);
+        // 게시글 수정(등록)
+        function updateBoard2() {
+            $('#create_btn').hide();
+            $('#update_btn').show();
+
+            let board_id = "[[${board_id}]]";
+            let title = $('#title').val();
+            let contents = $('#contents').val();
+
+            let data = {
+                "title": title,
+                "contents": contents
+            };
+
+            debugger
+            $.ajax({
+                type: 'PATCH',
+                url: '/api/board/' + board_id,
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('게시글이 수정되었습니다!');
+                    window.location.reload();
+                }
+            })
         }
+
+        // 게시글 수정(버튼 액션만)
+        function updateBoard() {
+            $('#title').attr('readonly', false);
+            $('#contents').attr('readonly', false);
+            $('#create_btn').show();
+            $('#update_btn').hide();
+        }
+
+        // 게시글 삭제
+        function deleteBoard() {
+            let board_id = "[[${board_id}]]";
+
+            // 1. DELETE /api/board/{id} 에 요청해서 게시판를 삭제합니다.
+            $.ajax({
+                type: "DELETE",
+                url: `/api/board/` + board_id,
+                success: function (response) {
+                    alert('게시글이 삭제되었습니다!');
+                    window.location.href = "/board";
+                }
+            })
+        }
+
     </script>
 
 </head>
 <body>
 <div id="container">
+    <input type="hidden" id="board_id" value="">
+    <input type="hidden" id="user_id" value="">
+
     <div id="header-list-left" style="text-align: left">
         <a th:href="@{/}" style="text-align: left">
             <button type="button" class="btn btn-dark">HOME</button>
@@ -153,7 +191,6 @@
     <h5 style="text-align: center;padding-bottom: 60px;">공유하고 싶은 소식을 입력해주세요</h5>
 
     <div id="write">
-        <button type="button" class="btn btn-dark" th:onclick="|location.href='@{/board/write}'|">글쓰기</button>
     </div>
 
     <hr/>
@@ -165,7 +202,8 @@
                     <th style="width: 20%;"><label>제목</label></th>
                     <th style="width: 80%">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="title" name="title" placeholder="제목...">
+                            <input type="text" class="form-control" id="title" name="title" placeholder="제목..."
+                                   readonly>
                         </div>
                     </th>
                 </tr>
@@ -175,14 +213,15 @@
                     <td>작성자
                     </td>
                     <td>
-                        <span sec:authentication="principal.username"></span>
+                        <span id="username"></span>
+                        <span style='float:right'>작성일자 : <span id="modifiedAt"></span></span>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
                         <div class="form-floating">
                             <textarea class="form-control" placeholder="내용..." id="contents"
-                                      style="height: 250px;"></textarea>
+                                      style="height: 250px;" readonly></textarea>
                         </div>
                     </td>
                 </tr>
@@ -193,9 +232,12 @@
                 <tr>
                     <td>
                         <span style='float:right'>
-                            <button type="button" id="create" class="btn btn-primary">등록</button>
-                            <!--                            <button type="button" id="udate" class="btn btn-warning">수정</button>-->
-                            <!--                            <button type="button" id="delete" class="btn btn-dange">삭제</button>-->
+                            <button type="button" id="create_btn" class="btn btn-primary" style="display: none"
+                                    onclick="updateBoard2()">등록</button>
+                            <button type="button" id="update_btn" class="btn btn-warning"
+                                    onclick="updateBoard()">수정</button>
+                            <button type="button" id="delete_btn" class="btn btn-dange"
+                                    onclick="deleteBoard()">삭제</button>
                         </span>
                     </td>
                 </tr>

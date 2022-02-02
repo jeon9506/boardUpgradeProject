@@ -10,6 +10,7 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
 
     <title>개발자 게시판 페이지</title>
 
@@ -75,14 +76,14 @@
             /* 0% {color:white;} 30% {color: yellow;} 100% {color:red; font-weight: bold;} */
         } </style>
 
-    <script>
+    <script th:inline="javascript">
         $(document).ready(function () {
             // HTML 문서를 로드할 때마다 실행합니다.
-            getMessages();
+            getBoardList();
         })
 
         // 게시판를 불러와서 보여줍니다.
-        function getMessages() {
+        function getBoardList() {
             // 1. 기존 게시판 내용을 지웁니다.
             $('#contents').empty();
             // 2. 게시판 목록을 불러와서 HTML로 붙입니다.
@@ -93,15 +94,19 @@
                 success: function (response) {
                     let count = response.length;
                     $('#board_count').text(count);
-
+                    debugger
                     for (let i = 0; i < count; i++) {
                         let message = response[i];
                         let id = message['id'];
                         let title = message['title'];
-                        let username = message['username'];
+                        let username = message['user'].username;
                         let contents = message['contents'];
-                        let createAt = message['createAt'];
-                        let modifiedAt = message['modifiedAt'];
+                        let createAt = message['create_at'];
+                        let modifiedAt = message['modified_at'];
+
+                        createAt = formatDate(createAt)
+                        modifiedAt = formatDate(modifiedAt)
+
                         addHTML(id, title, username, contents, createAt, modifiedAt);
                     }
                 }
@@ -112,7 +117,7 @@
         function addHTML(id, title, username, contents, createAt, modifiedAt) {
             // 1. HTML 태그를 만듭니다.
             let tempHtml = `
-            <tr>
+            <tr onclick="location.href = '/board/${id}'">
                 <td id="${id}-number">${id}</td>
                 <td id="title">
                     <a id="${id}-title" href="/board/${id}">${title}</a>

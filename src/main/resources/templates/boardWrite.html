@@ -76,54 +76,26 @@
         } </style>
 
     <script>
-        $(document).ready(function () {
-            // HTML 문서를 로드할 때마다 실행합니다.
-            getMessages();
-        })
+        function createBoard() {
+            let title = $('#title').val();
+            let contents = $('#contents').val();
 
-        // 게시판를 불러와서 보여줍니다.
-        function getMessages() {
-            // 1. 기존 게시판 내용을 지웁니다.
-            $('#contents').empty();
-            // 2. 게시판 목록을 불러와서 HTML로 붙입니다.
+            let data = {
+                "title": title,
+                "contents": contents
+            };
+
             $.ajax({
-                type: 'GET',
+                type: 'POST',
                 url: '/api/board',
-                contentType: "application/json",
+                contentType: 'application/json',
+                data: JSON.stringify(data),
                 success: function (response) {
-                    let count = response.length;
-                    $('#board_count').text(count);
-
-                    for (let i = 0; i < count; i++) {
-                        let message = response[i];
-                        let id = message['id'];
-                        let title = message['title'];
-                        let username = message['username'];
-                        let contents = message['contents'];
-                        let createAt = message['createAt'];
-                        let modifiedAt = message['modifiedAt'];
-                        addHTML(id, title, username, contents, createAt, modifiedAt);
-                    }
+                    debugger
+                    alert('게시글이 등록되었습니다!');
+                    window.location.href = "/";
                 }
             })
-        }
-
-        // 게시판 하나를 HTML로 만들어서 body 태그 내 원하는 곳에 붙입니다.
-        function addHTML(id, title, username, contents, createAt, modifiedAt) {
-            // 1. HTML 태그를 만듭니다.
-            let tempHtml = `
-            <tr>
-                <td id="${id}-number">${id}</td>
-                <td id="title">
-                    <a id="${id}-title" href="/board/${id}">${title}</a>
-                    <span class="hit">hit!</span>
-                </td>
-                <td id="${id}-username">${username}</td>
-                <td id="${id}-modifiedAt">${modifiedAt}</td>
-                <td>---</td>
-            <tr>`;
-            // 2. #cards-box 에 HTML을 붙인다.
-            $('#contents').append(tempHtml);
         }
     </script>
 
@@ -153,7 +125,6 @@
     <h5 style="text-align: center;padding-bottom: 60px;">공유하고 싶은 소식을 입력해주세요</h5>
 
     <div id="write">
-        <button type="button" class="btn btn-dark" th:onclick="|location.href='@{/board/write}'|">글쓰기</button>
     </div>
 
     <hr/>
@@ -193,54 +164,14 @@
                 <tr>
                     <td>
                         <span style='float:right'>
-                            <button type="button" id="create" class="btn btn-primary">등록</button>
+                            <button type="button" id="create" class="btn btn-primary"
+                                    onclick="createBoard()">등록</button>
                             <!--                            <button type="button" id="udate" class="btn btn-warning">수정</button>-->
                             <!--                            <button type="button" id="delete" class="btn btn-dange">삭제</button>-->
                         </span>
                     </td>
                 </tr>
                 </thead>
-            </table>
-            <table class="table table-condensed">
-                <tr>
-                    <td>
-                        <div style="text-align: right;">
-                            <button type="button" id="create"
-                                    class="btn btn-primary">등록
-                            </button>
-                        </div>
-                        <span class="form-inline" role="form">
-                            <div class="input-group" style="width: 100%">
-                                  <span class="input-group-text" style="width: 15%"><span sec:authentication="principal.username"></span></span>
-                                  <textarea class="form-control" placeholder="댓글..."></textarea>
-                            </div>
-                        </span>
-                    </td>
-                </tr>
-            </table>
-            <table class="table table-condensed">
-                <tr>
-                    <td>
-                        <div id="list" style="text-align: left"><b>댓글 (<span id="board_count">0</span>)</b></div>
-                        <div style="text-align: right">
-                            <button type="button" id="create_sub"
-                                    class="btn btn-primary">등록
-                            </button>
-                            <button type="button" id="udate_sub"
-                                    class="btn btn-warning">수정
-                            </button>
-                            <button type="button" id="delete_sub"
-                                    class="btn btn-dange">삭제
-                            </button>
-                        </div>
-                        <span class="form-inline" role="form">
-                            <div class="input-group" style="width: 100%">
-                                  <span class="input-group-text" style="width: 15%">댓글 누구</span>
-                                  <textarea class="form-control"></textarea>
-                            </div>
-                        </span>
-                    </td>
-                </tr>
             </table>
         </div>
     </div>

@@ -2,12 +2,15 @@ package com.basic.boardUpgradeProject.controller.restcontroller;
 
 import com.basic.boardUpgradeProject.dto.BoardDto;
 import com.basic.boardUpgradeProject.model.Board;
+import com.basic.boardUpgradeProject.model.User;
+import com.basic.boardUpgradeProject.security.UserDetailsImpl;
 import com.basic.boardUpgradeProject.service.BoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -16,42 +19,43 @@ public class BoardRestController {
     private final BoardService boardService;
 
     // 게시글 저장
-//    @PostMapping("api/board")
-//    public BoardDto createBoard(@RequestBody BoardDto requestDto) {
-//        System.out.println(requestDto.getBoard_title());
-//        System.out.println(requestDto.getUser_name());
-//        System.out.println(requestDto.getBoard_contents());
-//        System.out.println("게시글 저장 성공!!!");
-//        return boardService.creatBoard(requestDto);
-//    }
+    @PostMapping("api/board")
+    public BoardDto createBoard(@RequestBody BoardDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        System.out.println("게시글 저장!!!");
+        User user = userDetails.getUser();
+
+        return boardService.creatBoard(requestDto, user);
+    }
 
     // 게시글 전체조회
     @GetMapping("api/board")
-    public List<BoardDto> readBoardList() {
-        System.out.println("게시글 전체조회 성공!!!");
-
+    public List<Board> readBoardList() {
+        System.out.println("게시글 전체조회!!!");
         return boardService.readBoardList();
     }
 
-//    // 게시글 한개조회
-//    @GetMapping("api/board/{board_id}")
-//    public BoardDto readBoard(@PathVariable Integer board_id) {
-//        System.out.println("게시글 한개조회 성공!!!");
-//        return boardService.readBoard(board_id);
-//    }
-//
-//    // 게시글 수정
-//    @PatchMapping("api/board/{board_id}")
-//    public Integer updateBoard(@PathVariable Integer board_id, @RequestBody BoardDto boardDto) {
-//        boardService.update(board_id, boardDto);
-//        System.out.println("수정완료 : " + board_id);
-//        return board_id;
-//    }
-//
-//    // 게시글 삭제
-//    @DeleteMapping("api/board/{board_id}")
-//    public Integer deleteBoard(@PathVariable Integer board_id) {
-//        boardService.deleteBoard(board_id);
-//        return board_id;
-//    }
+    // 게시글 한개조회
+    @GetMapping("api/board/{board_id}")
+    public Optional<Board> readBoard(@PathVariable Long board_id) {
+        System.out.println("게시글 한개조회!!!");
+        return boardService.readBoard(board_id);
+    }
+
+    // 게시글 수정
+    @PatchMapping("api/board/{board_id}")
+    public Long updateBoard(@PathVariable Long board_id, @RequestBody BoardDto boardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        System.out.println("게시글 수정!!!");
+        boardService.update(board_id, boardDto);
+
+        System.out.println("수정완료!!!");
+        return board_id;
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("api/board/{board_id}")
+    public Long deleteBoard(@PathVariable Long board_id) {
+
+        boardService.deleteBoard(board_id);
+        return board_id;
+    }
 }

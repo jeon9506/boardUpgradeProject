@@ -1,16 +1,12 @@
 package com.basic.boardUpgradeProject.model;
 
 import com.basic.boardUpgradeProject.dto.BoardDto;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
-@Setter
 @Getter // get 함수를 일괄적으로 만들어줍니다.
+@AllArgsConstructor
 @NoArgsConstructor // 기본 생성자를 만들어줍니다.
 @Entity // DB 테이블 역할을 합니다.
 public class Board extends Timestamped {
@@ -32,18 +28,24 @@ public class Board extends Timestamped {
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 
-    @JsonIgnoreProperties({"board"})
-    @OneToMany(mappedBy = "board")
-    private List<BoardComment> comment;
+    // 빌더 패턴 dto -> entity(생성자)
+    @Builder
+    public Board(BoardDto boardDto, User user) {
+        this.title = boardDto.getTitle();
+        this.contents = boardDto.getContents();
+        this.user = user;
+    }
 
+    // entity -> dto
     public BoardDto toDto() {
         return BoardDto.builder()
-                .id(this.id)
                 .title(this.title)
                 .contents(this.contents)
-                .username(this.getUser().getUsername())
-                .createAt(this.getCreateAt())
-                .modifiedAt(this.getModifiedAt())
                 .build();
+    }
+
+    public void update(BoardDto requestDto) {
+        this.title = requestDto.getTitle();
+        this.contents = requestDto.getContents();
     }
 }

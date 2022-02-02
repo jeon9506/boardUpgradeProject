@@ -40,11 +40,11 @@ public class User {
     private Long kakaoId;
 
     @JsonIgnoreProperties({"user"})
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Board> board;
 
     @JsonIgnoreProperties({"user"})
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<BoardComment> comment;
 
     public User(String username, String password, String email, UserRoleEnum role) {
