@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">-->
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -10,8 +10,6 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/js/common.js"></script>
-
     <title>개발자 게시판 페이지</title>
 
     <style>
@@ -113,6 +111,15 @@
             })
         }
 
+        // Date formate
+        function formatDate(date) {
+            var d = new Date(date), month = '' + (d.getMonth() + 1), day = '' + d.getDate(),
+                year = d.getFullYear();
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            return [year, month, day].join('-');
+        }
+
         // 게시판 하나를 HTML로 만들어서 body 태그 내 원하는 곳에 붙입니다.
         function addHTML(id, title, username, contents, createAt, modifiedAt) {
             // 1. HTML 태그를 만듭니다.
@@ -137,13 +144,12 @@
 <div id="container">
     <div id="header-list" style="text-align: right">
         <th:block sec:authorize="isAuthenticated()">
-            <span sec:authentication="principal.username"></span>님 반가워요!!!
+            <span th:text="${username}"></span> 반가워요!!!
             <a th:href="@{/user/logout}">
                 <button type="button" class="btn btn-dark">로그아웃</button>
             </a>
         </th:block>
-        <th:block sec:authorize="!isAuthenticated()">
-            <span sec:authentication="principal.username"></span>님 반가워요!
+        <th:block sec:authorize="isAnonymous()">
             <a th:href="@{/user/login}">
                 <button type="button" class="btn btn-dark">로그인</button>
             </a>
@@ -154,7 +160,9 @@
 
     <div id="list"><b>게시판 (전체 글: [<span id="board_count">0</span>])</b></div>
     <div id="write">
-        <button type="button" class="btn btn-dark" th:onclick="|location.href='@{/board/write}'|">글쓰기</button>
+        <th:block sec:authorize="isAuthenticated()">
+            <button type="button" class="btn btn-dark" th:onclick="|location.href='@{/board/write}'|">글쓰기</button>
+        </th:block>
     </div>
 
     <hr/>

@@ -109,13 +109,12 @@
     </div>
     <div id="header-list-right" style="text-align: right">
         <th:block sec:authorize="isAuthenticated()">
-            <span sec:authentication="principal.username"></span>님 반가워요!!!
+            <span th:text="${username}"></span> 반가워요!!!
             <a th:href="@{/user/logout}">
                 <button type="button" class="btn btn-dark">로그아웃</button>
             </a>
         </th:block>
-        <th:block sec:authorize="!isAuthenticated()">
-            <span sec:authentication="principal.username"></span>님 반가워요!
+        <th:block sec:authorize="isAnonymous()">
             <a th:href="@{/user/login}">
                 <button type="button" class="btn btn-dark">로그인</button>
             </a>
