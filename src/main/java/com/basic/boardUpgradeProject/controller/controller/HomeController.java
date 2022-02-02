@@ -1,6 +1,5 @@
 package com.basic.boardUpgradeProject.controller.controller;
 
-import com.basic.boardUpgradeProject.model.UserRoleEnum;
 import com.basic.boardUpgradeProject.security.UserDetailsImpl;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;

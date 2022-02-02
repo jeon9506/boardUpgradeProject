@@ -83,7 +83,8 @@
 
         // 게시글 정보 메서드
         function getBoardInfo() {
-            let board_id = "[[${board_id}]]";
+            let board_id = [[${board_id}]];
+            let grant_username = [[${username}]];
 
             $.ajax({
                 type: 'GET',
@@ -106,6 +107,12 @@
                     $('#modifiedAt').text(modifiedAt);
                     $('#board_id').val(board_id);
                     $('#user_id').val(user_id);
+
+                    debugger
+                    if(grant_username == username){
+                        $('#update_btn').show();
+                        $('#delete_btn').show();
+                    }
                 }
             })
         }
@@ -237,15 +244,18 @@
             <table class="table table-condensed">
                 <thead>
                 <tr>
-                    <td>
-                        <span style='float:right' sec:authorize="isAuthenticated()">
+                    <td style="text-align:right">
+                        <th:block sec:authorize="isAuthenticated()">
                             <button type="button" id="create_btn" class="btn btn-primary" style="display: none"
-                                    onclick="updateBoard2()">등록</button>
-                            <button type="button" id="update_btn" class="btn btn-warning"
-                                    onclick="updateBoard()">수정</button>
-                            <button type="button" id="delete_btn" class="btn btn-dange"
-                                    onclick="deleteBoard()">삭제</button>
-                        </span>
+                                    onclick="updateBoard2()">등록
+                            </button>
+                            <button type="button" id="update_btn" class="btn btn-warning" style="display: none"
+                                    onclick="updateBoard()">수정
+                            </button>
+                            <button type="button" id="delete_btn" class="btn btn-dange" style="display: none"
+                                    onclick="deleteBoard()">삭제
+                            </button>
+                        </th:block>
                     </td>
                 </tr>
                 </thead>
@@ -260,8 +270,7 @@
                         </div>
                         <span class="form-inline" role="form">
                             <div class="input-group" style="width: 100%">
-                                  <span class="input-group-text" style="width: 15%"><span
-                                          sec:authentication="principal.username"></span></span>
+                                  <span class="input-group-text" style="width: 15%"><span th:text="${username}"></span></span>
                                   <textarea class="form-control" placeholder="댓글..."></textarea>
                             </div>
                         </span>
@@ -298,5 +307,4 @@
 </div>
 
 </body>
-<script type="text/javascript" src="/js/common.js"></script>
 </html>
