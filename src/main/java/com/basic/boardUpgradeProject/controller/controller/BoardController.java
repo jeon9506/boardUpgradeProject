@@ -12,7 +12,7 @@ public class BoardController {
 
     // 게시판 상세페이지
     @RequestMapping("/board/{board_id}")
-    public String boardDetail(Model model, @PathVariable("board_id") Integer board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public String boardDetail(Model model, @PathVariable("board_id") Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         model.addAttribute("board_id", board_id);
 
         if(userDetails != null){

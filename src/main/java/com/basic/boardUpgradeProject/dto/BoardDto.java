@@ -1,6 +1,5 @@
 package com.basic.boardUpgradeProject.dto;
 
-import com.basic.boardUpgradeProject.model.Board;
 import com.basic.boardUpgradeProject.model.User;
 import lombok.*;
 

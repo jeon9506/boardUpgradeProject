@@ -21,7 +21,6 @@ public class BoardRestController {
     // 게시글 저장
     @PostMapping("api/board")
     public BoardDto createBoard(@RequestBody BoardDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        System.out.println("게시글 저장!!!");
         User user = userDetails.getUser();
 
         return boardService.creatBoard(requestDto, user);
@@ -30,24 +29,20 @@ public class BoardRestController {
     // 게시글 전체조회
     @GetMapping("api/board")
     public List<Board> readBoardList() {
-        System.out.println("게시글 전체조회!!!");
         return boardService.readBoardList();
     }
 
     // 게시글 한개조회
     @GetMapping("api/board/{board_id}")
     public Optional<Board> readBoard(@PathVariable Long board_id) {
-        System.out.println("게시글 한개조회!!!");
         return boardService.readBoard(board_id);
     }
 
     // 게시글 수정
     @PatchMapping("api/board/{board_id}")
     public Long updateBoard(@PathVariable Long board_id, @RequestBody BoardDto boardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        System.out.println("게시글 수정!!!");
         boardService.update(board_id, boardDto);
 
-        System.out.println("수정완료!!!");
         return board_id;
     }
 

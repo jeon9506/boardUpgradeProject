@@ -92,7 +92,6 @@
                 success: function (response) {
                     let count = response.length;
                     $('#board_count').text(count);
-                    debugger
                     for (let i = 0; i < count; i++) {
                         let message = response[i];
                         let id = message['id'];

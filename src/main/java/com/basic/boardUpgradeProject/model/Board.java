@@ -1,9 +1,11 @@
 package com.basic.boardUpgradeProject.model;
 
 import com.basic.boardUpgradeProject.dto.BoardDto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter // get 함수를 일괄적으로 만들어줍니다.
 @AllArgsConstructor
@@ -27,6 +29,10 @@ public class Board extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
+
+    @JsonIgnoreProperties({"board"})
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<BoardComment> boardComment;
 
     // 빌더 패턴 dto -> entity(생성자)
     @Builder

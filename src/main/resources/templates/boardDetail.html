@@ -79,6 +79,7 @@
         $(document).ready(function () {
             // HTML 문서를 로드할 때마다 실행합니다.
             getBoardInfo();
+            getBoardCommentList();
         })
 
         // 게시글 정보 메서드
@@ -108,8 +109,7 @@
                     $('#board_id').val(board_id);
                     $('#user_id').val(user_id);
 
-                    debugger
-                    if(grant_username == username){
+                    if (grant_username == username) {
                         $('#update_btn').show();
                         $('#delete_btn').show();
                     }
@@ -117,21 +117,12 @@
             })
         }
 
-        // Date formate
-        function formatDate(date) {
-            var d = new Date(date), month = '' + (d.getMonth() + 1), day = '' + d.getDate(),
-                year = d.getFullYear();
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-            return [year, month, day].join('-');
-        }
-
         // 게시글 수정(등록)
         function updateBoard2() {
             $('#create_btn').hide();
             $('#update_btn').show();
 
-            let board_id = "[[${board_id}]]";
+            let board_id = [[${board_id}]];
             let title = $('#title').val();
             let contents = $('#contents').val();
 
@@ -167,7 +158,7 @@
             // 1. DELETE /api/board/{id} 에 요청해서 게시판를 삭제합니다.
             $.ajax({
                 type: "DELETE",
-                url: `/api/board/` + board_id,
+                url: ` / api / board / ` + board_id,
                 success: function (response) {
                     alert('게시글이 삭제되었습니다!');
                     window.location.href = "/board";
@@ -175,6 +166,113 @@
             })
         }
 
+        // 댓글 정보 메서드
+        function getBoardCommentList() {
+            let board_id = [[${board_id}]];
+            let grant_username = [[${username}]];
+
+            $.ajax({
+                type: 'GET',
+                url: '/api/board/comment/',
+                contentType: "application/json",
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                        let message = response[i];
+                        let id = message['comment_id'];
+                        let comment = message['comment'];
+                        let username = message['username'];
+                        let createAt = message['create_at'];
+                        let modifiedAt = message['modified_at'];
+                        addHTML(id, comment, username, grant_username, createAt, modifiedAt);
+                    }
+                }
+            })
+        }
+
+        // 댓글 수정(등록) 메서드
+        function onclickCommentUpdate2(id) {
+        }
+
+        // 댓글 수정 메서드
+        function onclickCommentUpdate(id) {
+            $(`#` + `${id}-create_sub`).show();
+            $(`#` + `${id}-update_sub`).hide();
+            $(`#` + `${id}-comment`).attr('readonly', false);
+        }
+
+        // 게시판 하나를 HTML로 만들어서 body 태그 내 원하는 곳에 붙입니다.
+        function addHTML(id, comment, username, grant_username, createAt, modifiedAt) {
+            // 1. HTML 태그를 만듭니다.
+            let tempHtml = ` <div style="text-align: right">`;
+            tempHtml += `        <span>${modifiedAt}</span>`
+            tempHtml += `        <button type="button" id="${id}-create_sub" name="${id}-create_sub" class="btn btn-primary" style="display: none" onclick="onclickCommentUpdate2('${id}')">등록</button>`;
+            tempHtml += `        <button type="button" id="${id}-update_sub" name="${id}-update_sub" class="btn btn-warning" style="display: none" onclick="onclickCommentUpdate('${id}')">수정</button>`;
+            tempHtml += `        <button type="button" id="${id}-delete_sub" name="${id}-delete_sub" class= "btn btn-dange" style="display: none" onclick="onclickCommentDelete('${id}')">삭제</button>`;
+            tempHtml += `    </div>`
+            tempHtml += `    <span class="form-inline" role="form" style="margin-top: 5px;margin-bottom: 5px">`
+            tempHtml += `        <div class="input-group" style="width: 100%">`
+            tempHtml += `            <span class="input-group-text" style="width: 15%;">${username}</span>`
+            tempHtml += `            <textarea id="${id}-comment" name="${id}-comment" class="form-control" readonly>${comment}</textarea>`
+            tempHtml += `        </div>`
+            tempHtml += `    </span>`
+
+            // 2. #comment-list 에 HTML을 붙인다.
+            $('#comment-list').append(tempHtml);
+            // 3. 버튼 권한 체크
+            if (username == grant_username) {
+                $(`#` + `${id}-update_sub`).show();
+                $(`#` + `${id}-delete_sub`).show();
+            }
+        }
+
+        // 댓글 등록
+        function createBoardComment() {
+            let grant_username = [[${username}]];
+
+            if (isEmpty(grant_username)) {
+                alert('로그인을 해주세요!!! >__<');
+                window.location.href = "/user/login";
+                return false;
+            } else {
+                let board_id = [[${board_id}]];
+                let comment = $('#comment').val();
+
+                let data = {
+                    "board_id": board_id,
+                    "comment": comment
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/board/comment',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        debugger
+                        alert('댓글이 등록되었습니다!');
+                        window.location.href = '/board/' + board_id;
+                    }
+                })
+            }
+        }
+
+        //null값 체크
+        function isEmpty(value) {
+            if (value == null || value.length === 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // Date formate
+        function formatDate(date) {
+            var d = new Date(date), month = '' + (d.getMonth() + 1), day = '' + d.getDate(),
+                year = d.getFullYear();
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            return [year, month, day].join('-');
+        }
     </script>
 
 </head>
@@ -264,14 +362,14 @@
                 <tr>
                     <td>
                         <div style="text-align: right;">
-                            <button type="button" id="create"
-                                    class="btn btn-primary">등록
+                            <button type="button" id="create_comment_btn" class="btn btn-primary"
+                                    onclick="createBoardComment()">등록
                             </button>
                         </div>
                         <span class="form-inline" role="form">
                             <div class="input-group" style="width: 100%">
                                   <span class="input-group-text" style="width: 15%"><span th:text="${username}"></span></span>
-                                  <textarea class="form-control" placeholder="댓글..."></textarea>
+                                  <textarea id="comment" class="form-control" placeholder="댓글..."></textarea>
                             </div>
                         </span>
                     </td>
@@ -280,27 +378,31 @@
             <table class="table table-condensed">
                 <tr>
                     <td>
-                        <div id="list" style="text-align: left"><b>댓글 (<span id="board_count">0</span>)</b></div>
-                        <div style="text-align: right">
-                            <button type="button" id="create_sub"
-                                    class="btn btn-primary">등록
-                            </button>
-                            <button type="button" id="udate_sub"
-                                    class="btn btn-warning">수정
-                            </button>
-                            <button type="button" id="delete_sub"
-                                    class="btn btn-dange">삭제
-                            </button>
+                        <div id="comment-list" style="text-align: left"><b>댓글 (<span id="board_count">0</span>)</b>
                         </div>
-                        <span class="form-inline" role="form">
-                            <div class="input-group" style="width: 100%">
-                                  <span class="input-group-text" style="width: 15%">댓글 누구</span>
-                                  <textarea class="form-control"></textarea>
-                            </div>
-                        </span>
+                        <!--                                                <div style="text-align: right">-->
+                        <!--                                                    <button type="button" id="create_sub"-->
+                        <!--                                                            class="btn btn-primary">등록-->
+                        <!--                                                    </button>-->
+                        <!--                                                    <button type="button" id="udate_sub"-->
+                        <!--                                                            class="btn btn-warning">수정-->
+                        <!--                                                    </button>-->
+                        <!--                                                    <button type="button" id="delete_sub"-->
+                        <!--                                                            class="btn btn-dange">삭제-->
+                        <!--                                                    </button>-->
+                        <!--                                                </div>-->
+                        <!--                                                <span class="form-inline" role="form">-->
+                        <!--                                                    <div class="input-group" style="width: 100%">-->
+                        <!--                                                          <span class="input-group-text" style="width: 15%">댓글 누구</span>-->
+                        <!--                                                          <textarea class="form-control"></textarea>-->
+                        <!--                                                    </div>-->
+                        <!--                                                </span>-->
                     </td>
                 </tr>
             </table>
+            <!-- Paging 처리 -->
+            <div id="paging"> 페이징 처리?</div>
+            <!-- Paging 끝 -->
         </div>
     </div>
     <hr/>
