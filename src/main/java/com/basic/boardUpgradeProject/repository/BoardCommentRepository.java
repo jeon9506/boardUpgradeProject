@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface BoardCommentRepository extends JpaRepository<BoardComment, Long> {
-    @Query("select s from BoardComment s")
+    @Query("select s from BoardComment s order by s.modifiedAt desc ")
     List<BoardComment> findAllByOrderByModifiedAtDesc();
 }
 
