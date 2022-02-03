@@ -3,11 +3,11 @@ package com.basic.boardUpgradeProject.service;
 import com.basic.boardUpgradeProject.dto.BoardCommentDto;
 import com.basic.boardUpgradeProject.model.Board;
 import com.basic.boardUpgradeProject.model.BoardComment;
-import com.basic.boardUpgradeProject.model.User;
 import com.basic.boardUpgradeProject.repository.BoardCommentRepository;
 import com.basic.boardUpgradeProject.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +20,7 @@ public class BoardCommentService {
     private final BoardCommentRepository boardCommentRepository;
 
     // 댓글 등록 서비스
+    @Transactional
     public BoardComment creatBoardComment(BoardCommentDto boardCommentDto, Long userId, String username) {
 
         Long boardId = boardCommentDto.getBoardId();
@@ -34,10 +35,11 @@ public class BoardCommentService {
 
     // 댓글 전체조회 서비스
     public List<BoardComment> readBoardCommentList() {
-        return boardCommentRepository.findAllByModifiedAt();
+        return boardCommentRepository.findAllByOrderByModifiedAtDesc();
     }
 
     // 댓글 수정 서비스
+    @Transactional
     public Long updateBoardComment(Long comment_id, BoardCommentDto boardCommentDto) {
         BoardComment boardComment = boardCommentRepository.findById(comment_id).orElseThrow(
                 () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")

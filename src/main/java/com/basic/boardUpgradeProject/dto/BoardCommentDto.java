@@ -10,4 +10,5 @@ import lombok.*;
 public class BoardCommentDto {
     private String comment;
     private Long boardId;
+    private Long userId;
 }

@@ -36,8 +36,9 @@ public class BoardCommentRestController {
 
     // 게시글 수정
     @PatchMapping("api/board/comment/{comment_id}")
-    public Long updateBoard(@PathVariable Long comment_id, @RequestBody BoardCommentDto boardDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        boardCommentService.updateBoardComment(comment_id, boardDto);
+    public Long updateBoard(@PathVariable Long comment_id, @RequestBody BoardCommentDto boardCommentDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        boardCommentDto.setUserId(userDetails.getUser().getId());
+        boardCommentService.updateBoardComment(comment_id, boardCommentDto);
 
         return comment_id;
     }

@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface BoardCommentRepository extends JpaRepository<BoardComment, Long> {
     @Query("select s from BoardComment s")
-    List<BoardComment> findAllByModifiedAt();
+    List<BoardComment> findAllByOrderByModifiedAtDesc();
 }
 
