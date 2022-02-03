@@ -29,23 +29,25 @@ public class BoardCommentRestController {
     }
 
     // 댓글 전체조회
-    @GetMapping("api/board/comment")
-    public List<BoardComment> readBoarCommentdList() {
-        return boardCommentService.readBoardCommentList();
+    @GetMapping("api/board/comment/{board_id}")
+    public List<BoardComment> readBoarCommentdList(@PathVariable Long board_id) {
+        List<BoardComment> boardComment = boardCommentService.readBoardCommentList(board_id);
+
+        return boardComment;
     }
 
-    // 게시글 수정
+    // 댓글 수정
     @PatchMapping("api/board/comment/{comment_id}")
-    public Long updateBoard(@PathVariable Long comment_id, @RequestBody BoardCommentDto boardCommentDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public Long updateBoardComment(@PathVariable Long comment_id, @RequestBody BoardCommentDto boardCommentDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         boardCommentDto.setUserId(userDetails.getUser().getId());
         boardCommentService.updateBoardComment(comment_id, boardCommentDto);
 
         return comment_id;
     }
 
-    // 게시글 삭제
+    // 댓글 삭제
     @DeleteMapping("api/board/comment/{comment_id}")
-    public Long deleteBoard(@PathVariable Long comment_id) {
+    public Long deleteBoardComment(@PathVariable Long comment_id) {
 
         boardCommentService.deleteBoardComment(comment_id);
         return comment_id;

@@ -38,12 +38,6 @@ public class BoardComment extends Timestamped {
         this.username = username;
     }
 
-    public BoardCommentDto toDto() {
-        return BoardCommentDto.builder()
-                .comment(this.comment)
-                .build();
-    }
-
     public void update(BoardCommentDto boardCommentDto) {
         this.comment = boardCommentDto.getComment();
     }

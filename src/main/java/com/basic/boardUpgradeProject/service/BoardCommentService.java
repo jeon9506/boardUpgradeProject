@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service // 스프링에게 이 클래스는 서비스임을 명시
@@ -34,8 +35,12 @@ public class BoardCommentService {
     }
 
     // 댓글 전체조회 서비스
-    public List<BoardComment> readBoardCommentList() {
-        return boardCommentRepository.findAllByOrderByModifiedAtDesc();
+    public List<BoardComment> readBoardCommentList(Long board_id) {
+        Board board = boardRepository.findById(board_id).orElseThrow(
+                () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+        );
+
+        return boardCommentRepository.findAllByBoardIdOrderByModifiedAtDesc(board_id);
     }
 
     // 댓글 수정 서비스
